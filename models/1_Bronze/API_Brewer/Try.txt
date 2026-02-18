@@ -1,0 +1,17 @@
+version: 2
+
+sources:
+  - name: openbrew
+    description: dados brutos em parquet provienientes da ingestao
+    tables:
+      - name: breweries_raw
+        description: arquivo parquet com listagem das cervejarias
+        external:
+          location: Bee_Challenger_V2/ingestion/raw_output/breweries.parquet
+          using: parquet
+        columns:
+          - name: id
+            description: Identificado geral
+            tests:
+              - unique
+              - not_null

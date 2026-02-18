@@ -2,10 +2,17 @@ version: 2
 
 sources:
   - name: openbrew
-    description: dados brutos em parquet provienientes da ingestao
+    description: Fonte de dados proveniente da API
+    database: workspace
+    schema: dbt_beer
     tables:
       - name: breweries_raw
-        description: arquivo
-        external:
-          location: Bee_Challenger_V2/ingestion/raw_output/breweries.parquet
-          using: parquet
+        description: Tablea listagem de cervejarias API Open Brewer
+        columns:
+          - name: id
+            description: chave privmaria da tabela
+            tests:
+              - unique
+              - not_null
+          
+           
