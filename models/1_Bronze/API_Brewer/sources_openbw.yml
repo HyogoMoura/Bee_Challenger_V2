@@ -1,0 +1,11 @@
+version: 2
+
+sources:
+  - name: openbrew
+    description: dados brutos em parquet provienientes da ingestao
+    tables:
+      - name: breweries_raw
+        description: arquivo
+        external:
+          location: Bee_Challenger_V2/ingestion/raw_output/breweries.parquet
+          using: parquet

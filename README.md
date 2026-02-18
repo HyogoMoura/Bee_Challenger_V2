@@ -13,3 +13,11 @@ Try running the following commands:
 - Join the [dbt community](https://getdbt.com/community) to learn from other analytics engineers
 - Find [dbt events](https://events.getdbt.com) near you
 - Check out [the blog](https://blog.getdbt.com/) for the latest news on dbt's development and best practices
+
+###
+1. Criação do projeto dbt
+2. Conexao com databricks
+3. Conexção github
+4. Inicialização do projeto
+5. Ajuste de camdas modelo
+    5.1 Raw OpenBrewery
