@@ -20,8 +20,9 @@ renamed (
     , phone
     , website_url as website_url
     , state
+    , country
     , street
-    , date_format(extraction_date, 'yyyy/MM/dd') as ext_date
+    , extraction_date
     from source_geral
 )
 
