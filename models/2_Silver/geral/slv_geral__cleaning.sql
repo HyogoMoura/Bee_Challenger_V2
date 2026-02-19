@@ -15,7 +15,7 @@ with
     select
     brew_pk,
     company_name,
-    business_size,
+    brewery_type,
     street,
     city,
     country,
@@ -32,8 +32,8 @@ with
   standarization AS (
   select
     brew_pk,
-    LOWER(company_name) as company_name,
-    business_size,
+    UPPER(company_name) as company_name,
+    UPPER(brewery_type) AS brewery_type ,
     street,
     city,
     country,

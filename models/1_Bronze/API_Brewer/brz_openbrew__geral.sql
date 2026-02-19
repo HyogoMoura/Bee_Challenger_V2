@@ -8,7 +8,7 @@ renamed (
     select
     id as brew_pk
     , name as company_name
-    , brewery_type as business_size
+    , brewery_type
     , address_1
     , address_2
     , address_3
