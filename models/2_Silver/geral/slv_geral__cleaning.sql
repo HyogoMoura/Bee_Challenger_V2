@@ -45,7 +45,18 @@ with
     website_url,
     date_format(extraction_date, 'yyyy/MM/dd') as ext_date
   from deduplciate_colunms
-  )
+  ),
 
-SELECT DISTINCT * FROM standarization
+    remove_invalid_latitude as (
+    SELECT * FROM standarization
+    WHERE latitude > -90 OR latitude < 90
+),
+
+    remove_invalid_longitude as (
+    SELECT * FROM remove_invalid_latitude
+    WHERE longitude > -180 OR longitude < 180
+)
+
+
+SELECT DISTINCT COUNT(*) FROM remove_invalid_longitude
 
