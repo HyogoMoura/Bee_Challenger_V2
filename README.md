@@ -14,6 +14,13 @@ Try running the following commands:
 - Find [dbt events](https://events.getdbt.com) near you
 - Check out [the blog](https://blog.getdbt.com/) for the latest news on dbt's development and best practices
 
+Step 1
+python3 -m venv venv
+
+Step 2
+source venv/bin/activate (linux)
+
+
 ###
 1. Criação do projeto dbt
 2. Conexao com databricks
@@ -21,3 +28,4 @@ Try running the following commands:
 4. Inicialização do projeto
 5. Ajuste de camdas modelo
     5.1 Raw OpenBrewery
+
