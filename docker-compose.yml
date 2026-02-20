@@ -1,4 +1,15 @@
 services:
+  dbt-packages-perms:
+    image: alpine:3.20
+    container_name: dbt-packages-perms
+    depends_on:
+      airflow-webserver:
+        condition: service_started
+    volumes:
+      - dbt-packages:/opt/airflow/dbt_packages
+    command: sh -c "chown -R 50000:0 /opt/airflow/dbt_packages && chmod -R 775 /opt/airflow/dbt_packages"
+    networks:
+      - airflow-network
 
   # ================= POSTGRES =================
   postgres:
@@ -30,12 +41,15 @@ services:
       AIRFLOW__DATABASE__SQL_ALCHEMY_CONN: postgresql+psycopg2://airflow:airflow@postgres/airflow
       AIRFLOW__CORE__FERNET_KEY: 'UKMzEm3yIuFYEq1y3-2FxPNWSVwRASpahmQ9kQfEr8E='
       AIRFLOW__CORE__LOAD_EXAMPLES: 'false'
+      DBT_PACKAGES_INSTALL_PATH: /opt/airflow/dbt_packages
     volumes:
       - ./airflow/dags:/opt/airflow/dags
       - ./airflow/plugins:/opt/airflow/plugins
       - airflow-logs:/opt/airflow/logs
       - ./:/opt/airflow/dbt
       - ./.dbt:/home/airflow/.dbt:ro
+      - dbt-packages:/opt/airflow/dbt_packages
+      - ./package-lock.yml:/opt/airflow/dbt/package-lock.yml
     entrypoint: /bin/bash
     command:
       - -c
@@ -74,6 +88,7 @@ services:
       - ./:/opt/airflow/dbt
       - ./.dbt:/home/airflow/.dbt:ro
       - dbt-packages:/opt/airflow/dbt_packages
+      - ./package-lock.yml:/opt/airflow/dbt/package-lock.yml
     ports:
       - "8080:8080"
     command: webserver
@@ -103,6 +118,7 @@ services:
       - ./:/opt/airflow/dbt
       - ./.dbt:/home/airflow/.dbt:ro
       - dbt-packages:/opt/airflow/dbt_packages
+      - ./package-lock.yml:/opt/airflow/dbt/package-lock.yml
     command: scheduler
     networks:
       - airflow-network
