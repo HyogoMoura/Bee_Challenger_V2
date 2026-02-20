@@ -15,11 +15,47 @@ Este repositório contém uma pipeline de dados com:
 - **Databricks** (execução do notebook de ingestão + destino das tabelas via Unity Catalog)
 
 > Padrão de arquitetura: **ELT** com **Medallion Architecture** (Bronze/Silver/Gold).
+> 
 
 ---
 
 ## Arquitetura
 ![Arquitetura utilziada](portainer/imagem.png)
+
+## Arquitetura do Projeto
+
+![Arquitetura utilizada](portainer/imagem.png)
+
+A arquitetura foi definida priorizando **modularidade** e **flexibilidade**, permitindo que as etapas de ingestão e transformação possam ser substituídas por outras plataformas com baixo impacto operacional e reduzido esforço de adaptação.
+
+### Ingestão de Dados
+
+A ingestão é realizada por meio de **notebooks no Databricks**, responsáveis por:
+
+* Consumir os dados da **Open Brewery API**
+* Executar a **paginação** das requisições
+* Persistir os dados brutos no **Databricks Delta Lakehouse**
+* Armazenar os dados em **tabelas gerenciadas**, possibilitando escalabilidade conforme a necessidade do volume de dados
+
+Essa abordagem garante rastreabilidade dos dados brutos e suporte a crescimento do ambiente.
+
+### Transformação de Dados
+
+A camada de transformação é executada utilizando **dbt Cloud**, conectado ao ambiente do Databricks.
+
+O dbt é responsável por:
+
+* Aplicar regras de transformação
+* Estruturar as camadas do modelo (ex: Bronze, Silver e Gold)
+* Garantir versionamento das transformações
+* Facilitar testes e documentação dos modelos
+
+Essa separação entre ingestão e transformação reforça o desacoplamento da arquitetura e melhora a governança dos dados.
+
+---
+
+Essa solução permite construir um **Data Lake escalável, resiliente e orientado a boas práticas modernas de engenharia de dados**.
+
 
 ### Visão geral (componentes)
 
@@ -118,8 +154,8 @@ Extra:
 {"token":"SEU_TOKEN_AQUI"}
 
 
-Para ver o funcionamento completo recomendo utilzar o dbt cloud e fazer os ajustes de credencias com databricks
-importa o projeto no dbt cloud e sexecutar dbt run.
+em caso de falha de verificacao do aiflow (possivel devido as variaveis de ambiente) recomendo utilzar o dbt cloud e fazer os ajustes de credencias com databricks
+importa o projeto no dbt cloud e executar dbt run.
 
 testes serao executados, transormaoes da camada silver e gold implementadas dentro do tabelas gerenciadas no lake house.
 
@@ -128,7 +164,8 @@ testes serao executados, transormaoes da camada silver e gold implementadas dent
 
 ### Roadmap (próximos upgrades)
 
-melhorar a subida do ambiente do airflow atualemnte bemcustosa e burocratica.
+melhorar a subida do ambiente do airflow atualemnte bem custosa e burocratica de configurar procurar usar solucao mais pratica para orquestar.
 avaliar metdos de orquestracao em cloud 
+
 
 
