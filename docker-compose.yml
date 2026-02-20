@@ -50,6 +50,7 @@ services:
       - ./.dbt:/home/airflow/.dbt:ro
       - dbt-packages:/opt/airflow/dbt_packages
       - ./package-lock.yml:/opt/airflow/dbt/package-lock.yml
+      - dbt-state:/opt/airflow/dbt_state
     entrypoint: /bin/bash
     command:
       - -c
@@ -89,6 +90,7 @@ services:
       - ./.dbt:/home/airflow/.dbt:ro
       - dbt-packages:/opt/airflow/dbt_packages
       - ./package-lock.yml:/opt/airflow/dbt/package-lock.yml
+      - dbt-state:/opt/airflow/dbt_state
     ports:
       - "8080:8080"
     command: webserver
@@ -119,6 +121,7 @@ services:
       - ./.dbt:/home/airflow/.dbt:ro
       - dbt-packages:/opt/airflow/dbt_packages
       - ./package-lock.yml:/opt/airflow/dbt/package-lock.yml
+      - dbt-state:/opt/airflow/dbt_state
     command: scheduler
     networks:
       - airflow-network
@@ -130,3 +133,4 @@ volumes:
   postgres-db-volume:
   airflow-logs:
   dbt-packages:
+  dbt-state:
