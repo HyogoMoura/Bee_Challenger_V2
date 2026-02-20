@@ -19,7 +19,7 @@ Este repositório contém uma pipeline de dados com:
 ---
 
 ## Arquitetura
-![Arquitetura utilziada](docs/imagem.png)
+![Arquitetura utilziada](portainer/imagem.png)
 
 ### Visão geral (componentes)
 
@@ -130,4 +130,5 @@ testes serao executados, transormaoes da camada silver e gold implementadas dent
 
 melhorar a subida do ambiente do airflow atualemnte bemcustosa e burocratica.
 avaliar metdos de orquestracao em cloud 
+
 
