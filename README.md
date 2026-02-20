@@ -23,7 +23,6 @@ Este repositório contém uma pipeline de dados com:
 
 ### Visão geral (componentes)
 
-```mermaid
 flowchart LR
   subgraph Local["Ambiente Local (Docker / WSL)"]
     AWeb["Airflow Webserver"]
@@ -131,3 +130,4 @@ testes serao executados, transormaoes da camada silver e gold implementadas dent
 
 melhorar a subida do ambiente do airflow atualemnte bemcustosa e burocratica.
 avaliar metdos de orquestracao em cloud 
+
