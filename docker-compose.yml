@@ -82,6 +82,9 @@ services:
       AIRFLOW__CORE__FERNET_KEY: 'UKMzEm3yIuFYEq1y3-2FxPNWSVwRASpahmQ9kQfEr8E='
       AIRFLOW__CORE__LOAD_EXAMPLES: 'false'
       DBT_PACKAGES_INSTALL_PATH: /opt/airflow/dbt_packages
+      DATABRICKS_HOST: https://dbc-f93a02fa-b3c2.cloud.databricks.com
+      DATABRICKS_HTTP_PATH: /sql/1.0/warehouses/73902284c513833e
+      DATABRICKS_TOKEN: ${DATABRICKS_TOKEN}
     volumes:
       - ./airflow/dags:/opt/airflow/dags
       - ./airflow/plugins:/opt/airflow/plugins
@@ -113,6 +116,10 @@ services:
       AIRFLOW__DATABASE__SQL_ALCHEMY_CONN: postgresql+psycopg2://airflow:airflow@postgres/airflow
       AIRFLOW__CORE__FERNET_KEY: 'UKMzEm3yIuFYEq1y3-2FxPNWSVwRASpahmQ9kQfEr8E='
       DBT_PACKAGES_INSTALL_PATH: /opt/airflow/dbt_packages
+      DATABRICKS_HOST: https://dbc-f93a02fa-b3c2.cloud.databricks.com
+      DATABRICKS_HTTP_PATH: /sql/1.0/warehouses/73902284c513833e
+      DATABRICKS_TOKEN: ${DATABRICKS_TOKEN}
+      
     volumes:
       - ./airflow/dags:/opt/airflow/dags
       - ./airflow/plugins:/opt/airflow/plugins
