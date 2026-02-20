@@ -34,6 +34,8 @@ services:
       - ./airflow/dags:/opt/airflow/dags
       - ./airflow/plugins:/opt/airflow/plugins
       - airflow-logs:/opt/airflow/logs
+      - ./:/opt/airflow/dbt
+      - ./.dbt:/home/airflow/.dbt:ro
     entrypoint: /bin/bash
     command:
       - -c
@@ -64,15 +66,20 @@ services:
       AIRFLOW__DATABASE__SQL_ALCHEMY_CONN: postgresql+psycopg2://airflow:airflow@postgres/airflow
       AIRFLOW__CORE__FERNET_KEY: 'UKMzEm3yIuFYEq1y3-2FxPNWSVwRASpahmQ9kQfEr8E='
       AIRFLOW__CORE__LOAD_EXAMPLES: 'false'
+      DBT_PACKAGES_INSTALL_PATH: /opt/airflow/dbt_packages
     volumes:
       - ./airflow/dags:/opt/airflow/dags
       - ./airflow/plugins:/opt/airflow/plugins
       - airflow-logs:/opt/airflow/logs
+      - ./:/opt/airflow/dbt
+      - ./.dbt:/home/airflow/.dbt:ro
+      - dbt-packages:/opt/airflow/dbt_packages
     ports:
       - "8080:8080"
     command: webserver
     networks:
       - airflow-network
+  
 
   # ================= AIRFLOW SCHEDULER =================
   airflow-scheduler:
@@ -88,10 +95,14 @@ services:
       AIRFLOW__CORE__EXECUTOR: LocalExecutor
       AIRFLOW__DATABASE__SQL_ALCHEMY_CONN: postgresql+psycopg2://airflow:airflow@postgres/airflow
       AIRFLOW__CORE__FERNET_KEY: 'UKMzEm3yIuFYEq1y3-2FxPNWSVwRASpahmQ9kQfEr8E='
+      DBT_PACKAGES_INSTALL_PATH: /opt/airflow/dbt_packages
     volumes:
       - ./airflow/dags:/opt/airflow/dags
       - ./airflow/plugins:/opt/airflow/plugins
       - airflow-logs:/opt/airflow/logs
+      - ./:/opt/airflow/dbt
+      - ./.dbt:/home/airflow/.dbt:ro
+      - dbt-packages:/opt/airflow/dbt_packages
     command: scheduler
     networks:
       - airflow-network
@@ -102,3 +113,4 @@ networks:
 volumes:
   postgres-db-volume:
   airflow-logs:
+  dbt-packages:

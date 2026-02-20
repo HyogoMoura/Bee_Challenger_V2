@@ -1,0 +1,11 @@
+default:
+  target: dev
+  outputs:
+    dev:
+      type: databricks
+      catalog: hive_metastore
+      schema: default
+      host: ${host}
+      http_path: ${http_path}
+      token: ${token}
+      threads: 4
