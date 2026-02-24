@@ -1,5 +1,11 @@
+<<<<<<< HEAD
 packages:
   - package: dbt-labs/dbt_utils
     version: 1.3.3
   - package: metaplane/dbt_expectations
     version: 0.10.10
+=======
+packages:
+  - git: "https://github.com/dbt-labs/dbt-utils.git"
+    revision: "1.3.3"
+>>>>>>> 0ef3b79bd7a86d2e5e18bd2fcb26ba9a8064fe8b

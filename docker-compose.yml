@@ -1,0 +1,143 @@
+services:
+  dbt-packages-perms:
+    image: alpine:3.20
+    container_name: dbt-packages-perms
+    depends_on:
+      airflow-webserver:
+        condition: service_started
+    volumes:
+      - dbt-packages:/opt/airflow/dbt_packages
+    command: sh -c "chown -R 50000:0 /opt/airflow/dbt_packages && chmod -R 775 /opt/airflow/dbt_packages"
+    networks:
+      - airflow-network
+
+  # ================= POSTGRES =================
+  postgres:
+    image: postgres:13
+    container_name: airflow-postgres
+    restart: always
+    environment:
+      POSTGRES_USER: airflow
+      POSTGRES_PASSWORD: airflow
+      POSTGRES_DB: airflow
+    volumes:
+      - postgres-db-volume:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD", "pg_isready", "-U", "airflow"]
+      interval: 5s
+      retries: 5
+    networks:
+      - airflow-network
+
+  # ================= AIRFLOW INIT =================
+  airflow-init:
+    build: .
+    container_name: airflow-init
+    depends_on:
+      postgres:
+        condition: service_healthy
+    environment:
+      AIRFLOW__CORE__EXECUTOR: LocalExecutor
+      AIRFLOW__DATABASE__SQL_ALCHEMY_CONN: postgresql+psycopg2://airflow:airflow@postgres/airflow
+      AIRFLOW__CORE__FERNET_KEY: 'UKMzEm3yIuFYEq1y3-2FxPNWSVwRASpahmQ9kQfEr8E='
+      AIRFLOW__CORE__LOAD_EXAMPLES: 'false'
+      DBT_PACKAGES_INSTALL_PATH: /opt/airflow/dbt_packages
+    volumes:
+      - ./airflow/dags:/opt/airflow/dags
+      - ./airflow/plugins:/opt/airflow/plugins
+      - airflow-logs:/opt/airflow/logs
+      - ./:/opt/airflow/dbt
+      - ./.dbt:/home/airflow/.dbt:ro
+      - dbt-packages:/opt/airflow/dbt_packages
+      - ./package-lock.yml:/opt/airflow/dbt/package-lock.yml
+      - dbt-state:/opt/airflow/dbt_state
+    entrypoint: /bin/bash
+    command:
+      - -c
+      - |
+        airflow db migrate &&
+        airflow users create \
+          --username admin \
+          --password admin \
+          --firstname Admin \
+          --lastname User \
+          --role Admin \
+          --email admin@example.com || true
+    networks:
+      - airflow-network
+
+  # ================= AIRFLOW WEBSERVER =================
+  airflow-webserver:
+    build: .
+    container_name: airflow-webserver
+    restart: always
+    depends_on:
+      postgres:
+        condition: service_healthy
+      airflow-init:
+        condition: service_completed_successfully
+    environment:
+      AIRFLOW__CORE__EXECUTOR: LocalExecutor
+      AIRFLOW__DATABASE__SQL_ALCHEMY_CONN: postgresql+psycopg2://airflow:airflow@postgres/airflow
+      AIRFLOW__CORE__FERNET_KEY: 'UKMzEm3yIuFYEq1y3-2FxPNWSVwRASpahmQ9kQfEr8E='
+      AIRFLOW__CORE__LOAD_EXAMPLES: 'false'
+      DBT_PACKAGES_INSTALL_PATH: /opt/airflow/dbt_packages
+      DATABRICKS_HOST: https://dbc-f93a02fa-b3c2.cloud.databricks.com
+      DATABRICKS_HTTP_PATH: /sql/1.0/warehouses/73902284c513833e
+      DATABRICKS_TOKEN: ${DATABRICKS_TOKEN}
+    volumes:
+      - ./airflow/dags:/opt/airflow/dags
+      - ./airflow/plugins:/opt/airflow/plugins
+      - airflow-logs:/opt/airflow/logs
+      - ./:/opt/airflow/dbt
+      - ./.dbt:/home/airflow/.dbt:ro
+      - dbt-packages:/opt/airflow/dbt_packages
+      - ./package-lock.yml:/opt/airflow/dbt/package-lock.yml
+      - dbt-state:/opt/airflow/dbt_state
+    ports:
+      - "8080:8080"
+    command: webserver
+    networks:
+      - airflow-network
+  
+
+  # ================= AIRFLOW SCHEDULER =================
+  airflow-scheduler:
+    build: .
+    container_name: airflow-scheduler
+    restart: always
+    depends_on:
+      postgres:
+        condition: service_healthy
+      airflow-init:
+        condition: service_completed_successfully
+    environment:
+      AIRFLOW__CORE__EXECUTOR: LocalExecutor
+      AIRFLOW__DATABASE__SQL_ALCHEMY_CONN: postgresql+psycopg2://airflow:airflow@postgres/airflow
+      AIRFLOW__CORE__FERNET_KEY: 'UKMzEm3yIuFYEq1y3-2FxPNWSVwRASpahmQ9kQfEr8E='
+      DBT_PACKAGES_INSTALL_PATH: /opt/airflow/dbt_packages
+      DATABRICKS_HOST: https://dbc-f93a02fa-b3c2.cloud.databricks.com
+      DATABRICKS_HTTP_PATH: /sql/1.0/warehouses/73902284c513833e
+      DATABRICKS_TOKEN: ${DATABRICKS_TOKEN}
+      
+    volumes:
+      - ./airflow/dags:/opt/airflow/dags
+      - ./airflow/plugins:/opt/airflow/plugins
+      - airflow-logs:/opt/airflow/logs
+      - ./:/opt/airflow/dbt
+      - ./.dbt:/home/airflow/.dbt:ro
+      - dbt-packages:/opt/airflow/dbt_packages
+      - ./package-lock.yml:/opt/airflow/dbt/package-lock.yml
+      - dbt-state:/opt/airflow/dbt_state
+    command: scheduler
+    networks:
+      - airflow-network
+
+networks:
+  airflow-network:
+
+volumes:
+  postgres-db-volume:
+  airflow-logs:
+  dbt-packages:
+  dbt-state:
